@@ -85,7 +85,7 @@ def load_data_files():
 # Callable function to save isochrone to update
 # Don't need load function as we simply update the value in the session_date.data['iso']
 def save_isochrone_gdf_to_file(gdf_iso):
-    fpath_iso = os.path.join(DATA_FOLDER, FNAME_ISO)
+    fpath_iso = os.path.join('assets', 'data', FNAME_ISO)
     try:
         save_gdf_to_parquet(gdf_iso, fpath_iso)
         print(f'****INFO Successfully save gdf_iso to {fpath_iso}')
@@ -167,7 +167,7 @@ def get_savills_score_weightings():
         and the bounds and score for each asset
         returns either  or if error None df_weightings and weightings_dict 
     """
-    fpath_weightings = os.path.join(DATA_FOLDER, FNAME_WEIGHTINGS)
+    fpath_weightings = os.path.join('assets', 'data', FNAME_WEIGHTINGS)
     # First load the front sheet where the column Internal name will provide keys to the other sheets
     try:
         if DEBUG_PRINT:
@@ -272,7 +272,7 @@ def load_ssdb_gdf_from_excel():
     returns gdf_ssdb or None"""
     FNAME_SSDB = 'SSDB.xlsx'
     try:
-        df_ssdb = pd.read_excel(os.path.join(DATA_FOLDER,FNAME_SSDB))
+        df_ssdb = pd.read_excel(os.path.join('assets', 'data',FNAME_SSDB))
         validated_df = get_validated_df_ssdb(df_ssdb)
         return get_gdf_ssdb_from_df(validated_df)
        
@@ -281,3 +281,4 @@ def load_ssdb_gdf_from_excel():
         print(f'!!!WARNING load_ssdb_gdf_from_excel was not able to load SSDB gdf into data session_state')
 
         return None
+
