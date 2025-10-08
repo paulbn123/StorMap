@@ -1,0 +1,22 @@
+iframe[width="100%"] {
+        height: calc(100vh - 200px);
+        overflow: hidden;
+        cursor: crosshair !important;
+    }
+
+.css-1d391kg {  /* Streamlit container class for main blocks */
+        margin-top: 0rem;
+        margin-bottom: 0rem;
+        width: 300px !important;
+    }
+
+
+section[data-testid="stSidebar"][aria-expanded="true"] {
+        width: 350px !important;
+    }
+
+
+.css-1avcm0n {  /* Buttons */
+        margin-top: 0rem;
+        margin-bottom: 0rem;
+    }
