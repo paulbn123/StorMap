@@ -21,7 +21,7 @@ DISPLAY_TAB_NAMES = ['Competition', 'Savills SS Score', 'Demographics', 'Data Su
 
 DEFAULT_STORE_NAME = 'Store Location'
 #### ORS => Needs to go to secrets
-ORS_API_KEY = st.secrets("ORS_API_KEY")
+ORS_API_KEY = st.secrets["ORS_API_KEY"]
 DISTANCE_NEAREST_ISO_M = 250
 
 
@@ -51,4 +51,5 @@ SQM_IN_SQKM = 1_000_000
 
 # DISTANCE_KM_PRECISION_DECIMAL_PLACES = 2
 # # MESSAGE_DISPLAY_SECONDS = 1
+
 # MAX_OUTPUT_DATAFRAME_ROWS = 100
