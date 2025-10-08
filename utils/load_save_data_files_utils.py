@@ -24,7 +24,7 @@ All contained in the assets/data folder
 It is called from session_state_utils _initialize_app_data()"""
 
 
-DATA_FOLDER = r'.\assets\data'
+
 
 FNAME_MSOA_20 = "gdf_2020_msoa_inc_data.parquet"
 FNAME_ISO = "gdf_iso_light_4326.parquet"
@@ -71,7 +71,7 @@ def load_data_files():
     gdfs = {}
 
     for key, fname in data_files.items():
-        fpath = os.path.join(DATA_FOLDER, fname)
+        fpath = os.path.join('assets','data', fname)
         gdf = load_gdf_from_parquet(fpath, epsg=4326)
 
         if not validate_gdf(gdf):
@@ -279,4 +279,5 @@ def load_ssdb_gdf_from_excel():
 
     except:
         print(f'!!!WARNING load_ssdb_gdf_from_excel was not able to load SSDB gdf into data session_state')
+
         return None
