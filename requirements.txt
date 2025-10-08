@@ -1,8 +1,10 @@
 streamlit
 pandas
 geopandas
-folium
 streamlit_folium
 openpyxl
 numpy
 openrouteservice 
+folium>=0.12
+matplotlib
+mapclassify
