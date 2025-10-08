@@ -332,7 +332,6 @@ def return_demo_chloropleth_map(gdf_name, storename, iso_time_mins):
         m = folium.Map(location=DEFAULT_MAP_CENTER_LATLON,
                        zoom_start=DEFAULT_MAP_ZOOM_START,
                        tiles=DEFAULT_TILE_LAYER, 
-                       height=DEMO_MAP_DISPLAY_HEIGHT_PX, 
                        width="100%")
         gdf_filtered.explore(m=m,
                         column=values_col,
@@ -401,6 +400,7 @@ def add_demo_gdf_to_session_state(gdf):
         #             print(f'\t {k}')
         #     except:
         #         print(f'****INFO add_demo_gdf_to_session_state could not get hold of gdf_demo info from session_state')
+
 
 
 
