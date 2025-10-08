@@ -353,9 +353,11 @@ def return_demo_chloropleth_map(gdf_name, storename, iso_time_mins):
             returned_objects=[]
         )
     
-    except:
-        print(f'!!!!WARNING error on return_demo_chloropleth_map')
-        return None
+    except Exception as e:
+      print(f'!!!!WARNING error on return_demo_chloropleth_map: {str(e)}')
+      import traceback
+      traceback.print_exc()
+      return None
 
 
 def add_demo_gdf_to_session_state(gdf):
@@ -400,6 +402,7 @@ def add_demo_gdf_to_session_state(gdf):
         #             print(f'\t {k}')
         #     except:
         #         print(f'****INFO add_demo_gdf_to_session_state could not get hold of gdf_demo info from session_state')
+
 
 
 
