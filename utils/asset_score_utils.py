@@ -66,7 +66,10 @@ def render_score_table():
         print(f'!!!!!WARNING render_score_table could not get storename or iso_time ')
 
 
-    _score_weightings = st.session_state.savills_score_weightings.copy()
+    _score_weightings = st.session_state.get("savills_score_weightings") 
+    if _score_weightings is None:
+        print(f'!!!!WARNING render_score_table could not get savills_score_weightings from session_state')
+        return
     
     output_factor_name = []
     internal_factor_name = []
@@ -226,6 +229,7 @@ def render_score_table():
                                 )
 
     _output_text = st.write(f'Savills Self Storage Score: {_overall_score_rounded} / 10')
+
 
 
 
