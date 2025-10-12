@@ -201,6 +201,27 @@ def get_validated_gdf_from_app_data(gdf_name):
 
 def clear_current_locations_reset_app():
     """
-    Backward compatibility function to replace the old utility function
+    Clears session_state to return user to map 
     """
-    SessionStateManager.clear_all()
+    initialize_search_map_session_state()
+    session_state_defaults = {
+        'selected_demo_gdf': None,
+        'gdf_competition': None,
+        'gdf_demo': {},
+        'output_competition': None,
+        'df_demo_summ': None,
+        'search_locations_df': pd.DataFrame(columns=["lat", "lng", "name"]),
+        'src_locations_selected' : False # this is the key rigger to show searhc UI
+    }
+    
+    for k, v in session_state_defaults.items():
+        st.session_state[k] = v
+
+    # Making sure the key search UI from the map is cleared
+    if 'location_name_input' in st.session_state:
+        st.session_state.location_name_input = ""
+    if 'tooltip_text' in st.session_state:
+        st.session_state.tooltip_text = None
+    st.session_state.clicked_location = None
+
+    st.rerun()
