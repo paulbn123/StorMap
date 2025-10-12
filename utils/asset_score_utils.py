@@ -111,6 +111,7 @@ def render_score_table():
                     print(f'****INFO _unweighted_score: {_unweighted_score}')
                 except:
                     print(f'!!!!WARNING could not get _unweighted_score')
+                    continue
                 
                 raw_value.append(_raw_value)
                 score_unweighted.append(_unweighted_score)
@@ -229,6 +230,7 @@ def render_score_table():
                                 )
 
     _output_text = st.write(f'Savills Self Storage Score: {_overall_score_rounded} / 10')
+
 
 
 
