@@ -3,7 +3,7 @@ import pandas as pd
 import geopandas as gpd
 
 from config.constants import DEBUG_PRINT, ISO_TIME_MINS
-
+from utils.search_map_utils import initialize_search_map_session_state
 
 class AppState:
     """Class to define the structure of application state"""
@@ -225,3 +225,4 @@ def clear_current_locations_reset_app():
     st.session_state.clicked_location = None
 
     st.rerun()
+
