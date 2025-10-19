@@ -112,16 +112,23 @@ def get_output_iso(drive_time, storename):
         return _gdf_isos_filtered.iloc[0:1] 
 
 
-def get_output_competition(drive_time, storename):
-    """Function returns gdf for all compeition within speicifed drive_time for specified store
-    Returns gdf or None"""
+def get_output_competition(drive_time, storename, selected_storage_types):
+    """Function returns gdf for all competition within specified drive_time for specified store
+    and filters by selected SS_Type
+    Returns gdf or None """
     _gdf_comp = st.session_state.get("gdf_competition")
-    if (_gdf_comp is None or drive_time is None or storename is None): 
-        print(f'!!!!WARNING get_output_competition could not get gdf_iso from session_state')
+    if (_gdf_comp is None or drive_time is None or storename is None or not selected_storage_types): 
+        print(f'!!!!WARNING get_output_competition missing required parameters')
         return None
-    _gdf_comp_filtered = _gdf_comp[(_gdf_comp.iso_time_mins == drive_time) & (_gdf_comp.storename == storename)].copy()
+    
+    _gdf_comp_filtered = _gdf_comp[
+        (_gdf_comp.iso_time_mins == drive_time) & 
+        (_gdf_comp.storename == storename) &
+        (_gdf_comp.ss_type.isin(selected_storage_types))
+    ].copy()
+    
     if _gdf_comp_filtered.empty:
-        print(f'!!!!WARNING get_output_iso could not find matches for {storename} {drive_time}')
+        print(f'!!!!WARNING get_output_competition no matches for {storename} {drive_time} with selected types')
         return None
     else:
         return _gdf_comp_filtered
@@ -137,10 +144,14 @@ def update_competition_data():
     # Get selected values from radio buttons
     selected_storename = st.session_state.get("selected_storename")
     selected_drive_time = st.session_state.get("selected_drive_time")
+    selected_storage_types = st.session_state.get("selected_storage_types")
     
-    # # Get geodataframes from session state
-    # gdf_isos = st.session_state.get("gdf_isos")
-    # gdf_competition = st.session_state.get("gdf_competition")
+    if not selected_drive_time:
+        return st.error("Please select a drive time")
+    if not selected_storename:
+        return st.error("Please select a store name")
+    if not selected_storage_types:
+        return st.error("Please select at least one storage type")
     
     print(f'******************************')
     print(f'Checking gdf comp outputs - iso and competition')
@@ -150,7 +161,8 @@ def update_competition_data():
     st.session_state["output_iso"] = get_output_iso(storename=selected_storename,
                                                     drive_time=selected_drive_time)
     st.session_state["output_competition"]  = get_output_competition(storename=selected_storename,
-                                                            drive_time=selected_drive_time)
+                                                            drive_time=selected_drive_time,
+                                                            selected_storage_types=selected_storage_types)
     
     # # Check if required data exists and filter
     # if (gdf_isos is not None and gdf_competition is not None and 
@@ -207,13 +219,24 @@ def render_competition_map():
 
     selected_drive_time = st.session_state.get("selected_drive_time")
     selected_store = st.session_state.get("selected_storename")
+    selected_storage_types = st.session_state.get("selected_storage_types")
+
+    # Validation checks
+    if not selected_drive_time:
+        return st.error("Please select a drive time")
+    if not selected_store:
+        return st.error("Please select a store name")
+    if not selected_storage_types:
+        return st.error("Please select at least one storage type")
 
     print(f'****INFO render_competition_map selected_store: {selected_store} selected drive time: {selected_drive_time}')
 
     # Get filtered data from function
     gdf_output_competition = get_output_competition(storename=selected_store,
-                                                  drive_time=selected_drive_time)
+                                                  drive_time=selected_drive_time,
+                                                  selected_storage_types=selected_storage_types)
     
+
     gdf_output_iso = get_output_iso(storename=selected_store,
                                                   drive_time=selected_drive_time)
 
@@ -351,10 +374,20 @@ def render_competition_header():
     """Function sets out summary of selected gdf in terms of number of stores in catchment area"""
     selected_storename = st.session_state.get("selected_storename")
     selected_drive_time = st.session_state.get("selected_drive_time")
+    selected_storage_types = st.session_state.get("selected_storage_types")
+
+    # Validation checks
+    if not selected_drive_time:
+        return st.error("Please select a drive time")
+    if not selected_storename:
+        return st.error("Please select a store name")
+    if not selected_storage_types:
+        return st.error("Please select at least one storage type")
     
     # Get filtered data from session state
     gdf_output_competition = get_output_competition(storename=selected_storename,
-                                                  drive_time=selected_drive_time)
+                                                  drive_time=selected_drive_time,
+                                                  selected_storage_types=selected_storage_types)
     
     if gdf_output_competition is not None:
         competition_count = len(gdf_output_competition.index)
@@ -385,18 +418,23 @@ def render_competition_data_summary_with_editor():
     _selected_storename = st.session_state.get("selected_storename")
     _selected_drive_time = st.session_state.get("selected_drive_time")
     _ss_types = st.session_state.get("selected_storage_types")
+    
+    # Validation checks
+    if not _selected_drive_time:
+        return st.error("Please select a drive time")
+    if not _selected_storename:
+        return st.error("Please select a store name")
+    if not _ss_types:
+        return st.error("Please select at least one storage type")
 
-    gdf_competition = get_output_competition(storename= _selected_storename, drive_time=_selected_drive_time)
+    _df_competition_filtered = get_output_competition(storename= _selected_storename, 
+                                             drive_time=_selected_drive_time,
+                                             selected_storage_types=_ss_types)
 
-    if gdf_competition is None:
+    if _df_competition_filtered is None:
         print(f'!!!!WARNING render_competition_data_summary_with_editor did not get any competion to render')
         return None
     
-
-    print(f'***INFO render_competition_data_summary_with_editor ss_types: {_ss_types}')
-
-    _df_competition_filtered = gdf_competition[(gdf_competition.ss_type.isin(_ss_types))].copy()
-
     _df_competition_columns = ['Competitor', 'address', 'ss_type', 'store_cla', 'store_mla', 'distance_km']
     df_output = _df_competition_filtered[_df_competition_columns].copy()
     
@@ -425,8 +463,6 @@ def render_competition_data_summary_with_editor():
     )
     
     # Process deletions
-    # Note the app renders gdf_outputs but the is drawn from gdf_competition - if we delete from output_competition 
-    # when the app re-creates output_competition it will still have the store in it
     if st.button("Delete Competitor"):
         rows_to_delete = edited_df[edited_df['Delete'] == True]
         if len(rows_to_delete) > 0:
@@ -434,17 +470,43 @@ def render_competition_data_summary_with_editor():
 
             if DEBUG_PRINT:
                 print(f'*****INFO render_competition_data_summary_with_editor competititors_to_delete: {competititors_to_delete}')
-                print(f'\tcurrent length of output_competion: {len(st.session_state.get("output_competition").index)}')
-             
-            # Remove rows from session state
-            mask = ~st.session_state.output_competition['Competitor'].isin(competititors_to_delete)
-            st.session_state.gdf_competition = gdf_competition[mask]
+            
+            # Error check: Verify output_competition exists in session state
+            if 'gdf_competition' not in st.session_state or st.session_state.gdf_competition is None:
+                st.error("Competition data not found in session state")
+                return
             
             if DEBUG_PRINT:
-                print(f'\tLength of  st.session_state.gdf_competition after deletion: {len(st.session_state.gdf_competition.index)}')
+                print(f'****INFO current length of output_competition: {len(st.session_state.gdf_competition.index)}')
+            
+            if 'Competitor' not in st.session_state.gdf_competition.columns:
+                st.error("'Competitor' column not found in competition data")
+                return
+            
+            # Apply mask with error checking
+            try:
+                mask = ~st.session_state.gdf_competition['Competitor'].isin(competititors_to_delete)
+                gdf_filtered = st.session_state.gdf_competition[mask]
+                
+                # Error check: Verify deletion actually removed rows
+                deleted_count = len(st.session_state.gdf_competition) - len(gdf_filtered)
+                if deleted_count == 0:
+                    st.warning(f"No matching competitors found to delete: {competititors_to_delete}")
+                    return
+                
+                # Update session state
+                st.session_state.gdf_competition = gdf_filtered
+                
+                if DEBUG_PRINT:
+                    print(f'\tLength of st.session_state.gdf_competition after deletion: {len(st.session_state.gdf_competition.index)}')
 
-            st.success(f"Deleted {len(competititors_to_delete)} rows")
-            st.rerun()
+                st.success(f"Deleted {deleted_count} rows")
+                st.rerun()
+                
+            except Exception as e:
+                print(f'!!!!WARNING Error during deletion: {str(e)}')
+                st.error(f"Error deleting competitors: {str(e)}")
+                return
         else:
             st.warning("No rows marked for deletion")
     
