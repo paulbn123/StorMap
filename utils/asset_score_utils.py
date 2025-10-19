@@ -7,6 +7,8 @@ from managers.session_state_manager import SessionStateManager
 
 from utils.demo_data_summary_management_utils import get_data_value_from_df_demo_summ
 from utils.competition_utils import summarise_competition, get_output_competition
+from utils.other_utils import validate_storename_and_iso_time_mins_in_df
+
 from config.constants import DEBUG_PRINT
 
 
@@ -52,14 +54,19 @@ def render_score_table():
 
 
     try: 
-        _storename = SessionStateManager.get_selected_storename()
-        if _storename is None:
-            print(f'!!!!WARNING render_score_table no storename found')
-            return
-        _iso_time_mins = SessionStateManager.get_selected_drive_time()
-        if _iso_time_mins is None:
-            print(f'!!!!WARNING render_score_table no _iso_time_mins found')
-            return
+       
+        _iso_time_mins = st.session_state.get("selected_drive_time")
+        _storename = st.session_state.get("selected_storename")
+        selected_storage_types = st.session_state.get("selected_storage_types")
+
+        # Validation checks
+        if not _iso_time_mins:
+            return st.error("Please select a drive time")
+        if not _storename:
+            return st.error("Please select a store name")
+        if not selected_storage_types:
+            return st.error("Please select at least one storage type")
+
         print(f'storename: {_storename } iso_time_mins: {_iso_time_mins}')
 
     except:
@@ -129,7 +136,8 @@ def render_score_table():
     print(f'****INFO render_score_table total_popn: {_total_popn_in_iso} ')
     
     _gdf_competition = get_output_competition(drive_time=_iso_time_mins,
-                                            storename=_storename)
+                                            storename=_storename,
+                                            selected_storage_types=selected_storage_types)
     if _gdf_competition is not None:
         print(f'****INFO render_score_table _gdf_competition {_gdf_competition.columns}')
         _competition_summary = summarise_competition(_gdf_competition)
@@ -230,7 +238,6 @@ def render_score_table():
                                 )
 
     _output_text = st.write(f'Savills Self Storage Score: {_overall_score_rounded} / 10')
-
 
 
 
