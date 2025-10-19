@@ -121,18 +121,33 @@ class DisplayUI:
                 st.rerun()
 
     def _render_storage_type_selector(self):
-        """Render storage type selector with proper state management"""
+        """Render storage type selector with checkboxes"""
         gdf_competition = st.session_state.get('gdf_competition')
         
+        print(f'****INFO - rendering checkbox multiselect')
+
         if gdf_competition is not None:
             unique_storage_types = gdf_competition['ss_type'].unique().tolist()
-                        
-            st.multiselect(
-                'Storage Types',
-                options=unique_storage_types,
-                default=st.session_state.get('selected_storage_types', unique_storage_types),
-                key='selected_storage_types'
-            )
+            
+            # Initialize session state if not exists
+            if 'selected_storage_types' not in st.session_state:
+                st.session_state.selected_storage_types = unique_storage_types.copy()
+            
+            st.write("Storage Types")
+            
+            # Create checkboxes for each storage type
+            for storage_type in unique_storage_types:
+                is_checked = st.checkbox(
+                    storage_type, 
+                    value=storage_type in st.session_state.selected_storage_types,
+                    key=f"checkbox_{storage_type}"
+                )
+                
+                # Update the session state list
+                if is_checked and storage_type not in st.session_state.selected_storage_types:
+                    st.session_state.selected_storage_types.append(storage_type)
+                elif not is_checked and storage_type in st.session_state.selected_storage_types:
+                    st.session_state.selected_storage_types.remove(storage_type)
 
     def _render_demo_type_selector(self):
         """Render demographic type selector with proper state management"""
