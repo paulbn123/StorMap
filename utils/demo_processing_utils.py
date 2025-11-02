@@ -341,8 +341,8 @@ def return_demo_chloropleth_map(gdf_name, storename, iso_time_mins):
         # Add custom CSS to the Folium map object to style the colormap caption
         caption_css = """
         <style>
-        #legend > g > text.caption {
-            font-size: 8px !important; 
+        .legend text {
+            font-size: 8px !important;
         }
         </style>
         """
@@ -414,6 +414,7 @@ def add_demo_gdf_to_session_state(gdf):
         #             print(f'\t {k}')
         #     except:
         #         print(f'****INFO add_demo_gdf_to_session_state could not get hold of gdf_demo info from session_state')
+
 
 
 
