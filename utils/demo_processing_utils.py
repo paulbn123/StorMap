@@ -337,6 +337,18 @@ def return_demo_chloropleth_map(gdf_name, storename, iso_time_mins):
                         column=values_col,
                         tooltip=values_col,
                         popup=True)
+        
+        # Add custom CSS to the Folium map object to style the colormap caption
+        caption_css = """
+        <style>
+        #legend > g > text.caption {
+            font-size: 8px !important; 
+        }
+        </style>
+        """
+        # Inject the CSS into the map's HTML header
+        m.get_root().header.add_child(folium.Element(caption_css))
+      
         # iso not required but use for bounds
         _output_iso = get_output_iso(storename=storename , drive_time=iso_time_mins)
         if _output_iso is not None:
@@ -402,6 +414,7 @@ def add_demo_gdf_to_session_state(gdf):
         #             print(f'\t {k}')
         #     except:
         #         print(f'****INFO add_demo_gdf_to_session_state could not get hold of gdf_demo info from session_state')
+
 
 
 
