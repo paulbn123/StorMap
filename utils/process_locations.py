@@ -27,7 +27,9 @@ def validate_confirmed_locations(df):
         print(f'df.columns {df.columns}')
         return False
 
-    if not pd.api.types.is_numeric_dtype(df['lat']) or not pd.api.types.is_numeric_dtype(df['lng']):
+    # Check if values are numeric (not just column dtype)
+    if not (pd.to_numeric(df['lat'], errors='coerce').notna().all() and 
+            pd.to_numeric(df['lng'], errors='coerce').notna().all()):
         st.error("Latitude and longitude must be numeric.")
         return False
             
