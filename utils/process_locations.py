@@ -28,9 +28,20 @@ def validate_confirmed_locations(df):
         return False
 
     if not pd.api.types.is_numeric_dtype(df['lat']) or not pd.api.types.is_numeric_dtype(df['lng']):
-        st.error("Latitude and longitude must be numeric.")
-        return False
+        # Convert to numeric, invalid values become NaN
+        df['lat_numeric'] = pd.to_numeric(df['lat'], errors='coerce')
+        df['lng_numeric'] = pd.to_numeric(df['lng'], errors='coerce')
 
+        # Find rows with invalid lat or lng
+        bad_rows = df[df['lat_numeric'].isna() | df['lng_numeric'].isna()]
+        
+        if not bad_rows.empty:
+            # Get list of store names (adjust 'storename' to your actual column name)
+            bad_stores = bad_rows['storename'].tolist()
+            
+            st.error(f"Invalid lat/lng for stores: {', '.join(bad_stores)}")
+            return False
+            
     if not ((df['lat'].between(-90, 90)).all() and (df['lng'].between(-180, 180)).all()):
         st.error("Some latitude or longitude values are out of valid range.")
         return False
