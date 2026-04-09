@@ -230,7 +230,7 @@ def process_popn_data():
                         'Weighted_Med_House_Price_YE_Mar2024',
                         'Resi_Sales_YE_Mar2024', 'LTE_3rooms', 'area_sqkm']
     
-    gdf_overlaid_popn_groupby = gdf_overlaid_popn_3035.groupby(_groupby_cols)[_sum_cols].sum(_sum_cols)
+    gdf_overlaid_popn_groupby = gdf_overlaid_popn_3035.groupby(_groupby_cols)[_sum_cols].sum()
     gdf_overlaid_popn_groupby = gdf_overlaid_popn_groupby.reset_index()
 
     # Recalculcate some of the columsn
